@@ -13,18 +13,10 @@
             </ul>
         </div>
     @endif
-    <form action="{{ route('departments.create') }}" method="POST" enctype="multipart/form-data">
-    @csrf
-    <button type="submit" class="btn btn-primary">Import Departments</button>
-        <input type="file" name="file" accept=".xlsx,.csv" required>
-
-    <a href="{{ route('departments.create') }}" class="btn btn-success" diaplay="inline">Export Departments</a>
-
-</form>
-
+   
 
     <!-- Form for creating a new department -->
-    <form action="{{ route('departments.store') }}" method="POST">
+    <form action="{{ route('departments.create') }}" method="POST">
         @csrf
 
         <div class="mb-3">

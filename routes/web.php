@@ -26,13 +26,17 @@ Route::middleware('auth')->group(function () {
 
     // Resource Routes for Departments and Students
     Route::resource('departments', DepartmentController::class);
-    Route::get('departments/export', [DepartmentController::class, 'export']);
-    Route::post('departments/import', [DepartmentController::class, 'import']);
-    
+    Route::post('/departments/create', [DepartmentController::class, 'store']);
+    Route::get('departments/import', [DepartmentController::class, 'import'])->name('departments.import');
+    Route::post('departments/import', [DepartmentController::class, 'importStore'])->name('departments.import.store');
+    Route::get('/export-departments', [DepartmentController::class, 'export'])->name('departments.export');  
+
     Route::resource('students', StudentController::class);
 
     // User export/import Routes
-   
+    Route::get('export-users', [UserController::class, 'export']);
+    Route::post('import-users', [UserController::class, 'import']);
+
     // Logout Route
     Route::post('/logout', function () {
         Auth::logout();
