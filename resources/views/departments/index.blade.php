@@ -3,9 +3,14 @@
 
 @section('content')
     <h1>Departments</h1>
+
+    <!-- Add Department Button -->
     <a href="{{ route('departments.create') }}" class="btn btn-primary">Add Department</a>
 
-    <table class="table">
+
+    <!-- Import and Export Buttons -->
+
+    <table class="table mt-3">
         <thead>
             <tr>
                 <th>Name</th>

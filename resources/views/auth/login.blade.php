@@ -43,5 +43,17 @@
                 {{ __('Log in') }}
             </x-primary-button>
         </div>
+       <div class="flex justify-center mt-4">
+    <a href="{{ route('login.google.redirect') }}"
+        class="flex items-center justify-center px-6 py-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:bg-gray-200 transition duration-200 ease-in-out">
+        <img src="https://developers.google.com/identity/images/g-logo.png"
+             alt="Google Logo"
+             class="w-5 h-5 mr-2">
+        <span class="text-gray-700 text-sm font-medium">
+            Sign in with Google
+        </span>
+    </a>
+</div>
+
     </form>
 </x-guest-layout>

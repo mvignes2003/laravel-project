@@ -4,6 +4,12 @@ namespace App\Http\Controllers;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\DepartmentsExport;
+use App\Imports\DepartmentsImport;
+
 
 class DepartmentController extends Controller
 {
@@ -114,7 +120,39 @@ return redirect()->route('departments.index')->with('success', 'Department updat
                          ->with('success', 'Department deleted successfully.');
     }
     
-        
+    public function export()
+    {
+        return Excel::download(new DepartmentExport, 'departments.xlsx');
+    }
+
+    // Import departments from Excel
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv',
+        ]);
+
+        Excel::import(new DepartmentImport, $request->file('file'));
+
+        return back()->with('success', 'Departments imported successfully!');
+    }
+    public function collection()
+    {
+        return Department::select('id', 'name', 'description')->get();
+    }
+
+    /**
+     * @return array
+     */
+    public function headings(): array
+    {
+        return [
+            'ID', 
+            'Department Name', 
+            'Description'
+        ];
+    }
+
     }
    
 
