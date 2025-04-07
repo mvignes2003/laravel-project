@@ -30,6 +30,15 @@
                 </div>
             </div>
         </nav>
+<!-- resources/views/layouts/app.blade.php -->
+<form action="{{ route('logout') }}" method="POST" style="position: absolute; top: 7px; right: 200px;">
+    @csrf
+    <button type="submit" style="padding: 10px 15px; background-color:rgb(19, 14, 14); color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Logout
+    </button>
+</form>
+
+
 
         <!-- Main Content Section -->
         <div class="my-4">

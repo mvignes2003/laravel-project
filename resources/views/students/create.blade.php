@@ -36,8 +36,8 @@
             @endforeach
         </select>
     </div>
-
-    <button type="submit" class="btn btn-primary">Save Student</button>
+<br>
+    <button type="submit" class="btn btn-primary">Save Student</button></br>
 </form>
 
 @endsection
