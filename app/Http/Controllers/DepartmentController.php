@@ -129,37 +129,35 @@ class DepartmentController extends Controller
         $request->validate([
             'department_file' => 'required|mimes:xlsx,csv|max:10240', // Only allow .xlsx or .csv files, max size 10MB
         ]);
-    
+        
         // Create an instance of the DepartmentImport class
         $import = new DepartmentImport();
-    
+        
         try {
             // Attempt to import the file
             $import->import($request->file('department_file'));
-    
+        
             // Check for any import errors from the session
             $errors = session()->get('import_errors', []);
-    
-            // If there are errors, flash them to the session
+        
             if (!empty($errors)) {
+                // Flash only the error message and do not show the success message
                 session()->flash('error', 'There were some issues with your import.');
                 session()->flash('import_errors', $errors);
             } else {
-                // Flash success message if no errors
+                // Only flash success message if there are no errors
                 session()->flash('success', 'Departments imported successfully!');
             }
+            
         } catch (\Exception $e) {
             // Handle unexpected errors
             session()->flash('error', 'An error occurred during the import: ' . $e->getMessage());
-
         }
-    
-        // Clear import errors from the session after displaying them
-    
+        
         // Redirect back to the departments index route
         return redirect()->route('departments.index');
-
     }
+    
     
     
     public function collection()
