@@ -1,149 +1,173 @@
-<?php 
+<?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Department;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\DepartmentsExport;
-use App\Imports\DepartmentsImport;
+use App\Exports\DepartmentExport;
+use App\Imports\DepartmentImport;
+
 
 
 class DepartmentController extends Controller
 {
+    // Display all departments
     public function index()
     {
         $departments = Department::all();
         return view('departments.index', compact('departments'));
     }
 
+    // Show form to create new department
     public function create()
     {
         return view('departments.create');
     }
 
+    // Store new department
     public function store(Request $request)
     {
-        
-            // Validate the incoming request
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255|unique:departments,name', // Ensure the name is unique
-            ], [
-                'name.required' => 'The department name is required.',
-                'name.unique' => 'This department already exists.', // Custom error message
-                
-               
-            ]);
-    
-            // If validation fails, return back with errors
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-    
-            // If validation passes, create the department
-            Department::create([
-                'name' => $request->input('name'),
-                'description' => $request->input('description'),
+        // Validation rules and custom error messages
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255|unique:departments,name', 
+            'description' => 'nullable|string|max:1000', // Optional description with a max length
+        ], [
+            'name.required' => 'The department name is required.',
+            'name.unique' => 'This department already exists.',
+            'description.string' => 'The description must be a valid string.',
+        ]);
 
-            ]);
-    
-            return redirect()->route('departments.index')->with('success', 'Department created successfully!');
-        
-        
-       
-       /* Department::create($request->all());
+        // Check validation
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('departments.index')
-                         ->with('success', 'Department created successfully.');
-         */               
+        // Create department after successful validation
+        Department::create([
+            'name' => $request->input('name'),
+            'description' => $request->input('description', '') // Default empty string if no description
+        ]);
+
+        return redirect()->route('departments.index')->with('success', 'Department created successfully!');
     }
 
+    // Show single department details
     public function show(Department $department)
     {
         return view('departments.show', compact('department'));
     }
 
+    // Show edit form for department
     public function edit(Department $department)
     {
         return view('departments.edit', compact('department'));
     }
 
-   /* public function update(Request $request, Department $department)
+    // Update department details
+    public function update(Request $request, Department $department)
     {
+        // Validation rules and custom error messages
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:departments,name', // Ensure the name is unique
+            'name' => 'required|string|max:255|unique:departments,name,' . $department->id, // Ignore current department ID during update
+            'description' => 'nullable|string|max:1000',
         ], [
             'name.required' => 'The department name is required.',
-            'name.unique' => 'This department already exists.', // Custom error message
-            
-           
+            'name.unique' => 'This department name already exists.',
         ]);
 
-        $department->update($validator);
+        // Check validation
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('departments.index')
-                         ->with('success', 'Department updated successfully.');
-    }*/
-    public function update(Request $request, $department)
-{
-   // Validate the request data
-$validator = Validator::make($request->all(), [
-    'name' => 'required|string|max:255|unique:departments,name', // Ensure the name is unique
-], [
-    'name.required' => 'The department name is required.',
-    'name.unique' => 'This department already exists.', // Custom error message
-]);
+        // Update department data after validation
+        $department->update([
+            'name' => $request->input('name'),
+            'description' => $request->input('description', ''), // Default empty string if no description
+        ]);
 
-// If validation fails, return to the previous page with error messages
-if ($validator->fails()) {
-    return redirect()->back()->withErrors($validator)->withInput();
-}
+        return redirect()->route('departments.index')->with('success', 'Department updated successfully!');
+    }
 
-// Update the department with the validated data
-$department->update([
-    'name' => $request->input('name'),
-]);
-
-// Redirect to the departments index page with success message
-return redirect()->route('departments.index')->with('success', 'Department updated successfully!');
-
-}
-
-
+    // Delete a department
     public function destroy(Department $department)
     {
         $department->delete();
-
-        return redirect()->route('departments.index')
-                         ->with('success', 'Department deleted successfully.');
+        return redirect()->route('departments.index')->with('success', 'Department deleted successfully.');
     }
-    
-    public function export()
+
+    // Export department data to Excel
+   /* public function export()
     {
         return Excel::download(new DepartmentExport, 'departments.xlsx');
-    }
+        
+    }*/
+    public function export()
+    {
+        // Flash success message
+       
+    
+        // Export the data
+        session()->flash('success', 'Exported successfully!');
 
+        // Trigger the download of the Excel file
+        return Excel::download(new DepartmentExport, 'departments.xlsx');
+        // session()->flash('success', 'Exported successfully!');
+    
+        // Redirect to another page (e.g., the list of departments or the current page)
+        // return redirect()->route('departments.index')->with('success', 'Exported successfully!');
+    }
+    
+    
     // Import departments from Excel
     public function import(Request $request)
     {
+        // Validate the uploaded file
         $request->validate([
-            'file' => 'required|mimes:xlsx,csv',
+            'department_file' => 'required|mimes:xlsx,csv|max:10240', // Only allow .xlsx or .csv files, max size 10MB
         ]);
+    
+        // Create an instance of the DepartmentImport class
+        $import = new DepartmentImport();
+    
+        try {
+            // Attempt to import the file
+            $import->import($request->file('department_file'));
+    
+            // Check for any import errors from the session
+            $errors = session()->get('import_errors', []);
+    
+            // If there are errors, flash them to the session
+            if (!empty($errors)) {
+                session()->flash('error', 'There were some issues with your import.');
+                session()->flash('import_errors', $errors);
+            } else {
+                // Flash success message if no errors
+                session()->flash('success', 'Departments imported successfully!');
+            }
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            session()->flash('error', 'An error occurred during the import: ' . $e->getMessage());
 
-        Excel::import(new DepartmentImport, $request->file('file'));
+        }
+    
+        // Clear import errors from the session after displaying them
+    
+        // Redirect back to the departments index route
+        return redirect()->route('departments.index');
 
-        return back()->with('success', 'Departments imported successfully!');
     }
+    
+    
     public function collection()
     {
         return Department::select('id', 'name', 'description')->get();
     }
 
-    /**
-     * @return array
-     */
+    // Headings for Excel export
     public function headings(): array
     {
         return [
@@ -153,6 +177,20 @@ return redirect()->route('departments.index')->with('success', 'Department updat
         ];
     }
 
-    }
-   
+    // Store imported departments
+    public function importStore(Request $request)
+    {
+        // Validate file type and size
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
 
+        try {
+            // Import departments data
+            Excel::import(new DepartmentImport, $request->file('file'));
+            return redirect()->back()->with('success', 'Departments imported successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error during import: ' . $e->getMessage());
+        }
+    }
+}
