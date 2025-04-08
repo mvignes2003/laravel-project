@@ -100,33 +100,68 @@ class DepartmentController extends Controller
     }
 
     // Export department data to Excel
-    public function export()
+   /* public function export()
     {
-        // dd('hi');
         return Excel::download(new DepartmentExport, 'departments.xlsx');
         
-    }
+    }*/
+    public function export()
+    {
+        // Flash success message
+       
+    
+        // Export the data
+        session()->flash('success', 'Exported successfully!');
 
+        // Trigger the download of the Excel file
+        return Excel::download(new DepartmentExport, 'departments.xlsx');
+        // session()->flash('success', 'Exported successfully!');
+    
+        // Redirect to another page (e.g., the list of departments or the current page)
+        // return redirect()->route('departments.index')->with('success', 'Exported successfully!');
+    }
+    
+    
     // Import departments from Excel
     public function import(Request $request)
-{
-    // Validate the uploaded file
-    $request->validate([
-        'file' => 'required|mimes:xlsx,csv|max:2048',
-    ]);
+    {
+        // Validate the uploaded file
+        $request->validate([
+            'department_file' => 'required|mimes:xlsx,csv|max:10240', // Only allow .xlsx or .csv files, max size 10MB
+        ]);
+    
+        // Create an instance of the DepartmentImport class
+        $import = new DepartmentImport();
+    
+        try {
+            // Attempt to import the file
+            $import->import($request->file('department_file'));
+    
+            // Check for any import errors from the session
+            $errors = session()->get('import_errors', []);
+    
+            // If there are errors, flash them to the session
+            if (!empty($errors)) {
+                session()->flash('error', 'There were some issues with your import.');
+                session()->flash('import_errors', $errors);
+            } else {
+                // Flash success message if no errors
+                session()->flash('success', 'Departments imported successfully!');
+            }
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            session()->flash('error', 'An error occurred during the import: ' . $e->getMessage());
 
-    try {
-        // Import data from the Excel file
-        Excel::import(new DepartmentImport, $request->file('file'));
+        }
+    
+        // Clear import errors from the session after displaying them
+    
+        // Redirect back to the departments index route
+        return redirect()->route('departments.index');
 
-        return redirect()->back()->with('success', 'Departments imported successfully!');
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'An error occurred during import: ' . $e->getMessage());
     }
-}
-
-
-    // Collection of departments for export
+    
+    
     public function collection()
     {
         return Department::select('id', 'name', 'description')->get();

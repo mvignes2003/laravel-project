@@ -2,10 +2,10 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Departments</h1>
+<center> <h1>Departments</h1>
 
     <!-- Add Department Button -->
-   <center> <a href="{{ route('departments.create') }}" class="btn btn-primary">Add Department</a>
+    <a href="{{ route('departments.create') }}" class="btn btn-primary">Add Department</a>
     <form action="{{ route('departments.import') }}" method="POST" enctype="multipart/form-data">
     @csrf
    <br> <button type="submit" class="btn btn-primary" >Import Departments</button>
@@ -14,7 +14,7 @@
     <a href="{{ route('departments.export') }}" class="btn btn-success" diaplay="inline">Export Departments</a>
 
 </form></center>
-
+  
 @if(session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
@@ -26,6 +26,23 @@
         {{ session('error') }}
     </div>
 @endif
+
+@if(session('import_errors') && count(session('import_errors')) > 0)
+    <ul class="alert alert-danger">
+        @foreach(session('import_errors') as $error)
+            <li>
+                <strong>Row {{ $error['row'] }}:</strong> {{ $error['error'] }}
+                <ul>
+                    <li><strong>Data:</strong> {{ implode(', ', $error['data']->toArray()) }}</li>
+                </ul>
+            </li>
+        @endforeach
+    </ul>
+    {{-- Clear the session after displaying errors --}}
+    {{ session()->forget('import_errors') }}
+@endif
+
+
 
     <!-- Import and Export Buttons -->
 
