@@ -2,7 +2,7 @@
 @extends('layouts.app')
 
 @section('content')
-<center> <h1>Departments</h1>
+   <center> <h1>Departments</h1>
 
     <!-- Add Department Button -->
     <a href="{{ route('departments.create') }}" class="btn btn-primary">Add Department</a>
@@ -14,13 +14,6 @@
     <a href="{{ route('departments.export') }}" class="btn btn-success" diaplay="inline">Export Departments</a>
 
 </form></center>
-  
-@if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
-
 @if(session('error'))
     <div class="alert alert-danger">
         {{ session('error') }}
@@ -40,8 +33,11 @@
     </ul>
     {{-- Clear the session after displaying errors --}}
     {{ session()->forget('import_errors') }}
+@elseif(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
 @endif
-
 
 
     <!-- Import and Export Buttons -->
