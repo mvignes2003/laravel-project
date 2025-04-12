@@ -1,62 +1,68 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Edit Student</h1>
+<div class="row mb-4">
+    <div class="col-lg-12 d-flex justify-content-between align-items-center">
+        <h2>Edit Student</h2>
+        <a class="btn btn-primary btn-sm" href="{{ route('students.index') }}">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
 
- <!-- Display validation errors if any 
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif -->
+<!-- Show validation errors if any -->
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <strong>Whoops!</strong> There were some problems with your input.<br><br>
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
-    <!-- Edit Student Form -->
-    <form action="{{ route('students.update', $student->id) }}" method="POST">
-        @csrf
-        @method('PUT')
+<!-- Student Edit Form -->
+<form action="{{ route('students.update', $student->id) }}" method="POST">
+    @csrf
+    @method('PUT')
 
-        <!-- Student Name -->
-        <div class="form-group">
-            <label for="name">Student Name</label>
-            <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $student->name) }}" required>
-        </div>
+    <!-- Student Name -->
+    <div class="mb-3">
+        <label for="name" class="form-label"><strong>Student Name:</strong></label>
+        <input type="text" name="name" id="name" class="form-control" 
+               value="{{ old('name', $student->name) }}" required>
+    </div>
 
-        <!-- Roll Number -->
-        <div class="form-group">
-            <label for="rollno">Roll Number</label>
-            <input type="text" name="rollno" id="rollno" class="form-control" value="{{ old('rollno', $student->rollno) }}" required>
-            @error('rollno')
-            <div class="alert alert-danger">{{ $message }}</div>
+    <!-- Roll Number -->
+    <div class="mb-3">
+        <label for="rollno" class="form-label"><strong>Roll Number:</strong></label>
+        <input type="text" name="rollno" id="rollno" class="form-control" 
+               value="{{ old('rollno', $student->rollno) }}" required>
+        @error('rollno')
+            <div class="text-danger mt-1">{{ $message }}</div>
         @enderror
-        </div>
+    </div>
 
-        <!-- Department -->
-        <div class="form-group">
-        <label for="department_id">Department</label>
+    <!-- Department -->
+    <div class="mb-3">
+        <label for="department_id" class="form-label"><strong>Department:</strong></label>
         <select name="department_id" id="department_id" class="form-control" required>
             <option value="">Select Department</option>
             @foreach($departments as $department)
-                <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
+                <option value="{{ $department->id }}" 
+                    {{ old('department_id', $student->department_id) == $department->id ? 'selected' : '' }}>
                     {{ $department->name }}
                 </option>
             @endforeach
         </select>
     </div>
 
-        <!-- Submit Button -->
-      
-      <br>  
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary">Update Student</button>
-
-        </div></br>
-    </form>
-    <!-- Back Button -->
-    <a href="{{ route('students.index') }}" class="btn btn-secondary mt-3">Back to Students</a>
-</div>
+    <!-- Submit Button -->
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-floppy-disk"></i> Update Student
+        </button>
+    </div>
+</form>
 @endsection
