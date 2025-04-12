@@ -1,36 +1,46 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Create New Department</h1>
-    
-    <!-- Display Validation Errors -->
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-   
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h2>Create New Department</h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a class="btn btn-primary btn-sm" href="{{ route('departments.index') }}">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
 
-    <!-- Form for creating a new department -->
-    <form action="{{ route('departments.create') }}" method="POST">
-        @csrf
+<!-- Display Validation Errors -->
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <strong>Whoops!</strong> There were some problems with your input.<br><br>
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
-        <div class="mb-3">
-            <label for="name" class="form-label">Department Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" required>
-        </div>
+<!-- Department Creation Form -->
+<form action="{{ route('departments.store') }}" method="POST">
+    @csrf
+    <div class="mb-3">
+        <label for="name" class="form-label"><strong>Department Name:</strong></label>
+        <input type="text" name="name" id="name" class="form-control" placeholder="Department Name" value="{{ old('name') }}" required>
+    </div>
 
-        <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea class="form-control" id="description" name="description" rows="3" required>{{ old('description') }}</textarea>
-        </div>
+    <div class="mb-3">
+        <label for="description" class="form-label"><strong>Description:</strong></label>
+        <textarea name="description" id="description" class="form-control" placeholder="Department Description" style="height: 150px;" required>{{ old('description') }}</textarea>
+    </div>
 
-        <button type="submit" class="btn btn-primary">Create Department</button>
-        <a href="{{ route('departments.index') }}" class="btn btn-secondary">Cancel</a>
-    </form>
-    
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-floppy-disk"></i> Submit
+        </button>
+    </div>
+</form>
 @endsection

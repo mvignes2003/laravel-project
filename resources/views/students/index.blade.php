@@ -1,36 +1,69 @@
 @extends('layouts.app')
 
 @section('content')
-<center>   
+
 <div class="container">
-        <h2>Students List</h2>
-        <a href="{{ route('students.create') }}" class="btn btn-primary">Add Student</a>
-        <table class="table table-bordered mt-4">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Roll No</th>
-                    <th>Department</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($students as $student)
-                    <tr>
-                        <td>{{ $student->name }}</td>
-                        <td> {{ $student->rollno }}</td>
-                        <td>{{ $student->department->name ?? 'N/A' }}</td>
-                        <td>
-                            <a href="{{ route('students.edit', $student->id) }}" class="btn btn-warning">Edit</a>
-                            <form action="{{ route('students.destroy', $student->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h2>Students List</h2>
+        </div>
+        <div class="col-md-6 text-end">
+        @can('student-create')
+            <a href="{{ route('students.create') }}" class="btn btn-success">Add Student</a>
+            @endcan
+        </div>
     </div>
+
+    <!-- Session Messages -->
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @elseif(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    <!-- Students Table -->
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Name</th>
+                <th>Roll No</th>
+                <th>Department</th>
+                <th width="180">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($students as $student)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $student->name }}</td>
+                    <td>{{ $student->rollno }}</td>
+                    <td>{{ $student->department->name ?? 'N/A' }}</td>
+                    <td>
+                    <a href="{{ route('students.show', $student->id) }}" class="btn btn-info btn-sm">
+                    <i class="fa fa-show"></i> Show
+                    </a>
+                    @can('student-edit')
+
+                        <a href="{{ route('students.edit', $student->id) }}" class="btn btn-primary btn-sm">
+                            <i class="fa fa-edit"></i> Edit
+                        </a>
+                        @endcan
+
+                        @can('student-delete')
+                        <form action="{{ route('students.destroy', $student->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this student?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
+                        </form>
+                        @endcan
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
 @endsection

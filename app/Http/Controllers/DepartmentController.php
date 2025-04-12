@@ -14,6 +14,13 @@ use App\Imports\DepartmentImport;
 
 class DepartmentController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:department-list|department-create|department-edit|department-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:department-create', ['only' => ['create','store']]);
+         $this->middleware('permission:department-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:department-delete', ['only' => ['destroy']]);
+    }
     // Display all departments
     public function index()
     {
@@ -99,30 +106,16 @@ class DepartmentController extends Controller
         return redirect()->route('departments.index')->with('success', 'Department deleted successfully.');
     }
 
-    // Export department data to Excel
-   /* public function export()
-    {
-        return Excel::download(new DepartmentExport, 'departments.xlsx');
-        
-    }*/
+  
     public function export()
     {
-        // Flash success message
        
-    
-        // Export the data
         session()->flash('success', 'Exported successfully!');
 
-        // Trigger the download of the Excel file
         return Excel::download(new DepartmentExport, 'departments.xlsx');
-        // session()->flash('success', 'Exported successfully!');
-    
-        // Redirect to another page (e.g., the list of departments or the current page)
-        // return redirect()->route('departments.index')->with('success', 'Exported successfully!');
+           
     }
-    
-    
-    // Import departments from Excel
+
     public function import(Request $request)
     {
         // Validate the uploaded file

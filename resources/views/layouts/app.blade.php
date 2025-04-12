@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,12 +20,20 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
+                        @can('department-list')
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('departments.index') }}">Departments</a>
+                            <a class="nav-link" href="{{ route('departments.index') }}">Departments</a></li>
+                            @endcan
+                            @can('student-list')
                             <li class="nav-item">
-                            <a class="nav-link" href="{{ route('students.index') }}">Students</a>
-                            </li>
-                        </li>
+                            <a class="nav-link" href="{{ route('students.index') }}">Students</a></li>
+                            @endcan
+                            @can('user-list')
+                        <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
+                        @endcan
+                        @can('role-list')
+                            <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>
+                        @endcan
                         <!-- You can add more navigation items here -->
                     </ul>
                 </div>

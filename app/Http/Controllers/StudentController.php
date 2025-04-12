@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Student;
@@ -10,6 +9,13 @@ use Illuminate\Validation\Rule;
 
 class StudentController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:student-list|student-create|student-edit|student-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:student-create', ['only' => ['create','store']]);
+         $this->middleware('permission:student-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:student-delete', ['only' => ['destroy']]);
+    }
     // Display a listing of students
     public function index()
     {
@@ -66,27 +72,7 @@ class StudentController extends Controller
     // Update the specified student in the database
     public function update(Request $request, Student $student)
     {
-       /* // Validate incoming request data
-        $validated = $request->validate([
-            'rollno' => 'required|unique:students,rollno',
-            'name' => 'required|string|max:255',
-            'department_id' => 'required|exists:departments,id'
-
-           
-        ],
-            
-            [
-         'rollno.unique' => 'This roll number already exists', // Custom error message for the unique validation
-
-        ]);
-        
-
-        // Update the student's data
-        $student->update($validated);
-
-        // Redirect to the students index page with success message
-        return redirect()->route('students.index')->with('success', 'Student updated successfully!');*/
-        // Validate incoming request data
+       
 $validated = $request->validate([
     'rollno' => [
         'required',
