@@ -184,4 +184,12 @@ class DepartmentController extends Controller
             return redirect()->back()->with('error', 'Error during import: ' . $e->getMessage());
         }
     }
+    public function students($id)
+{
+    $department = Department::with('students')->findOrFail($id);
+
+    return view('departments.students', [
+        'department' => $department
+    ]);
+}
 }

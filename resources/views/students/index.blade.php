@@ -1,13 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-
 <div class="container">
-    <div class="row mb-3">
-        <div class="col-md-6">
+
+    <div class="row">
+        <div class="col-lg-12 margin-tb">
+            <div class="pull-left">
             <h2>Students List</h2>
         </div>
-        <div class="col-md-6 text-end">
+        <div class="pull-right">
         @can('student-create')
             <a href="{{ route('students.create') }}" class="btn btn-success">Add Student</a>
             @endcan

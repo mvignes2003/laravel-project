@@ -6,6 +6,8 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ReportController;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -59,6 +61,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('users', UserController::class);
     Route::resource('departments', DepartmentController::class);
 });
+Route::resource('/reports',ReportController::class);
+Route::get('/departments/{id}/students', [DepartmentController::class, 'students'])->name('departments.students');
 
     
 

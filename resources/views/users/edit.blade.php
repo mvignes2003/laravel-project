@@ -55,12 +55,12 @@
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Role:</strong>
-                <select name="roles[]" class="form-control" multiple="multiple">
+                <select name="roles[]" class="form-control" multiple="multiple" style="color: black;">
                     @foreach ($roles as $value => $label)
-                        <option value="{{ $value }}" {{ isset($userRole[$value]) ? 'selected' : ''}}>
+                        <option value="{{ $value }}">
                             {{ $label }}
                         </option>
-                     @endforeach
+                    @endforeach
                 </select>
             </div>
         </div>
