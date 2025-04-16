@@ -1,29 +1,30 @@
 @extends('layouts.app')
 
 @section('content')
-
 <div class="container">
-    <div class="row mb-3">
-        <div class="col-md-6">
+
+<div class="row">
+    <div class="col-lg-12 margin-tb">
+        <div class="pull-left">
             <h1>Departments</h1>
         </div>
-        <div class="col-md-6 text-end">
-        @can('department-create')
-            <a href="{{ route('departments.create') }}" class="btn btn-success">Add Department</a>
+        <div class="pull-right">
+            @can('department-create')
+                <a href="{{ route('departments.create') }}" class="btn btn-success">Add Department</a>
             @endcan
         </div>
     </div>
+
     @can('department-create')
+        <!-- Import/Export Form -->
+        <form action="{{ route('departments.import') }}" method="POST" enctype="multipart/form-data" class="mb-3 d-flex align-items-center gap-2 mt-3">
+            @csrf
+            <input type="file" name="file" accept=".xlsx,.csv" required class="form-control w-auto">
+            <button type="submit" class="btn btn-primary">Import</button>
+            <a href="{{ route('departments.export') }}" class="btn btn-success">Export</a>
+        </form>
+    @endcan
 
-    <!-- Import/Export Form -->
-    <form action="{{ route('departments.import') }}" method="POST" enctype="multipart/form-data" class="mb-3 d-flex align-items-center gap-2">
-        @csrf
-
-        <input type="file" name="file" accept=".xlsx,.csv" required class="form-control w-auto">
-        <button type="submit" class="btn btn-primary">Import</button>
-        <a href="{{ route('departments.export') }}" class="btn btn-success">Export</a>
-    </form>
-@endcan
     <!-- Session Messages -->
     @if(session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>

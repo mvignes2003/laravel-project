@@ -1,47 +1,37 @@
 @extends('layouts.app')
 
 @section('content')
-
-<div class="container">
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <h2>Student Details</h2>
+<div class="row">
+    <div class="col-lg-12 margin-tb">
+        <div class="pull-left">
+            <h2>Show Student</h2>
         </div>
-        <div class="col-md-6 text-end">
-            <a href="{{ route('students.index') }}" class="btn btn-secondary">Back to List</a>
-        </div>
-    </div>
-
-    <!-- Student Details Table -->
-    <table class="table table-bordered mt-3">
-        <tbody>
-            <tr>
-                <th>Name</th>
-                <td>{{ $student->name }}</td>
-            </tr>
-            <tr>
-                <th>Roll No</th>
-                <td>{{ $student->rollno }}</td>
-            </tr>
-            <tr>
-                <th>Department</th>
-                <td>{{ $student->department->name ?? 'N/A' }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="row">
-        <div class="col-md-6">
-            <a href="{{ route('students.edit', $student->id) }}" class="btn btn-primary">Edit</a>
-        </div>
-        <div class="col-md-6 text-end">
-            <form action="{{ route('students.destroy', $student->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this student?');">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
+        <div class="pull-right">
+            <a class="btn btn-primary" href="{{ route('students.index') }}">Back</a>
         </div>
     </div>
 </div>
 
+<div class="row mt-4">
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>Name:</strong>
+            {{ $student->name }}
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>Roll No:</strong>
+            {{ $student->rollno }}
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="form-group">
+            <strong>Department:</strong>
+            {{ $student->department->name ?? 'N/A' }}
+        </div>
+    </div>
+</div>
 @endsection

@@ -16,6 +16,11 @@ class StudentController extends Controller
          $this->middleware('permission:student-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:student-delete', ['only' => ['destroy']]);
     }
+    public function show(Student $student)
+    {
+        return view('students.show', compact('student'));
+    }
+
     // Display a listing of students
     public function index()
     {
